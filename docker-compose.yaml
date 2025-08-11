@@ -1,0 +1,28 @@
+version: "3.8"
+
+services:
+  app:
+    build:
+      context: .
+    container_name: SharedServicesBundle_app
+    ports:
+      - "8080:8000"
+    volumes:
+      - .:/app
+    depends_on:
+      - database
+
+  database:
+    image: postgres:16-alpine
+    container_name: postgres_db_health
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - database_data:/var/lib/postgresql/data
+    ports:
+      - "5433:5432"
+
+volumes:
+  database_data:
