@@ -1,6 +1,6 @@
 <?php
 // src/Service/HealthChecker/ApiDependencyHealthChecker.php
-namespace mtonzar\SharedServiceBundle\Service\HealthChecker;
+namespace mtonzar\SharedServicesBundle\Service\HealthChecker;
 
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 

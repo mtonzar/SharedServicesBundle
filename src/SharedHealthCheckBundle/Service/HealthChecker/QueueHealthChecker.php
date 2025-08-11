@@ -1,6 +1,6 @@
 <?php
 // src/Service/HealthChecker/QueueHealthChecker.php
-namespace mtonzar\SharedServiceBundle\Service\HealthChecker;
+namespace mtonzar\SharedServicesBundle\Service\HealthChecker;
 
 use Symfony\Component\Messenger\Transport\TransportInterface;
 

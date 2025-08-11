@@ -1,6 +1,6 @@
 <?php
 // src/Service/HealthChecker/CacheHealthChecker.php
-namespace mtonzar\SharedServiceBundle\Service\HealthChecker;
+namespace mtonzar\SharedServicesBundle\Service\HealthChecker;
 
 use Symfony\Contracts\Cache\CacheInterface;
 

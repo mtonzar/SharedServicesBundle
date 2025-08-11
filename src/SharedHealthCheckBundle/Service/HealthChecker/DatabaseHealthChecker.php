@@ -1,6 +1,6 @@
 <?php
 // src/Service/HealthChecker/DatabaseHealthChecker.php
-namespace mtonzar\SharedServiceBundle\Service\HealthChecker;
+namespace mtonzar\SharedServicesBundle\Service\HealthChecker;
 
 use Doctrine\DBAL\Connection;
 
