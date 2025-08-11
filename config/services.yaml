@@ -1,5 +1,5 @@
 services:
-    mtonzar\SharedServicesBundle\DataProvider\HealthCheckProvider:
+    mtonzar\SharedServicesBundle\Provider\HealthCheckProvider:
         arguments:
             $databaseChecker: '@mtonzar\SharedServicesBundle\Service\HealthChecker\DatabaseHealthChecker'
             $cacheChecker: '@mtonzar\SharedServicesBundle\Service\HealthChecker\CacheHealthChecker'
