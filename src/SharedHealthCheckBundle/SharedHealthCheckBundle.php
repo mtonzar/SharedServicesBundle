@@ -1,7 +1,7 @@
 <?php
 
 
-namespace SharedHealthCheckBundle;
+namespace mtonzar\SharedServiceBundle;
 
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
