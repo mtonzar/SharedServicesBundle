@@ -1,6 +1,6 @@
 <?php
 // src/Entity/HealthCheck.php
-namespace App\Entity;
+namespace mtonzar\SharedServiceBundle\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\GetCollection;

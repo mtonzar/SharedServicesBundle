@@ -5,17 +5,10 @@
   "license": "MIT",
   "autoload": {
     "psr-4": {
-      "mtonzar\\SharedServicesBundle\\": "src/"
+      "mtonzar\\SharedServicesBundle\\": "src/SharedServiceBundle/"
     }
   },
-  "repositories": [
-    {
-      "type": "git",
-      "url": "https://github.com/mtonzar/SharedServicesBundle.git"
-    }
-  ],
   "require": {
-    "mtonzar/shared-services-bundle": "dev-master",
     "php": ">=8.1",
     "ext-ctype": "*",
     "ext-iconv": "*",

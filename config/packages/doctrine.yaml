@@ -16,12 +16,12 @@ doctrine:
         naming_strategy: doctrine.orm.naming_strategy.underscore_number_aware
         auto_mapping: true
         mappings:
-            App:
-                type: attribute
+            SharedServiceBundle:
                 is_bundle: false
-                dir: '%kernel.project_dir%/src/Entity'
-                prefix: 'App\Entity'
-                alias: App
+                type: attribute
+                dir: '%kernel.project_dir%/src/SharedServiceBundle/Entity'
+                prefix: 'mtonzar\SharedServiceBundle\Entity'
+                alias: SharedServiceBundle
 
 when@test:
     doctrine:

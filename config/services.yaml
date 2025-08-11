@@ -1,18 +1,13 @@
-# This file is the entry point to configure your own services.
-# Files in the packages/ subdirectory configure your dependencies.
-
-# Put parameters here that don't need to change on each machine where the app is deployed
-# https://symfony.com/doc/current/best_practices.html#use-parameters-for-application-configuration
-parameters:
-
 services:
-    _defaults:
-        autowire: true
-        autoconfigure: true
-    mtonzar\SharedServicesBundle\:
-        resource: "../src/"
-        exclude:
-            - "../src/DependencyInjection/"
+    mtonzar\SharedHealthCheckBundle\DataProvider\HealthCheckProvider:
+        arguments:
+            $databaseChecker: '@mtonzar\SharedHealthCheckBundle\Service\HealthChecker\DatabaseHealthChecker'
+            $cacheChecker: '@mtonzar\SharedHealthCheckBundle\Service\HealthChecker\CacheHealthChecker'
+            $queueChecker: '@mtonzar\SharedHealthCheckBundle\Service\HealthChecker\QueueHealthChecker'
+            $apiDependencyChecker: '@mtonzar\SharedHealthCheckBundle\Service\HealthChecker\ApiDependencyHealthChecker'
+        tags: ['api_platform.state_provider']
 
-    # add more service definitions when explicit configuration is needed
-    # please note that last definitions always *replace* previous ones
+    mtonzar\SharedHealthCheckBundle\Service\HealthChecker\DatabaseHealthChecker: ~
+    mtonzar\SharedHealthCheckBundle\Service\HealthChecker\CacheHealthChecker: ~
+    mtonzar\SharedHealthCheckBundle\Service\HealthChecker\QueueHealthChecker: ~
+    mtonzar\SharedHealthCheckBundle\Service\HealthChecker\ApiDependencyHealthChecker: ~

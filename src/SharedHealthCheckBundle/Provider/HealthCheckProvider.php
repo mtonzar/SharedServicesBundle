@@ -1,13 +1,13 @@
 <?php
-namespace App\DataProvider;
+namespace mtonzar\SharedServiceBundle\DataProvider;
 
 use ApiPlatform\State\ProviderInterface;
 use ApiPlatform\Metadata\Operation;
-use App\Entity\HealthCheck;
-use App\Service\HealthChecker\DatabaseHealthChecker;
-use App\Service\HealthChecker\CacheHealthChecker;
-use App\Service\HealthChecker\QueueHealthChecker;
-use App\Service\HealthChecker\ApiDependencyHealthChecker;
+use mtonzar\SharedServiceBundle\Entity\HealthCheck;
+use mtonzar\SharedServiceBundle\Service\HealthChecker\DatabaseHealthChecker;
+use mtonzar\SharedServiceBundle\Service\HealthChecker\CacheHealthChecker;
+use mtonzar\SharedServiceBundle\Service\HealthChecker\QueueHealthChecker;
+use mtonzar\SharedServiceBundle\Service\HealthChecker\ApiDependencyHealthChecker;
 
 class HealthCheckProvider implements ProviderInterface
 {

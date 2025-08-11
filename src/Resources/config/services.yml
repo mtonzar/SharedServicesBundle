@@ -1,8 +1,0 @@
-services:
-    App\DataProvider\HealthCheckProvider:
-        arguments:
-            $databaseChecker: '@App\Service\HealthChecker\DatabaseHealthChecker'
-            $cacheChecker: '@App\Service\HealthChecker\CacheHealthChecker'
-            $queueChecker: '@App\Service\HealthChecker\QueueHealthChecker'
-            $apiDependencyChecker: '@App\Service\HealthChecker\ApiDependencyHealthChecker'
-        tags: ['api_platform.state_provider']
