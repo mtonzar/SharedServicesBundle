@@ -5,7 +5,7 @@
   "license": "MIT",
   "autoload": {
     "psr-4": {
-      "mtonzar\\SharedServicesBundle\\": "src/SharedServiceBundle/"
+      "mtonzar\\SharedServicesBundle\\": "src/SharedHealthCheckBundle/"
     }
   },
   "require": {
