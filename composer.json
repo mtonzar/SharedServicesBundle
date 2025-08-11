@@ -1,14 +1,21 @@
 {
-  "name": "mon-organisation/shared-services-bundle",
+  "name": "mtonzar/shared-services-bundle",
   "description": "Bundle Symfony partagé avec services communs (health checks, etc.)",
   "type": "symfony-bundle",
   "license": "MIT",
   "autoload": {
     "psr-4": {
-      "SharedServicesBundle\\": "src/"
+      "mtonzar\\SharedServicesBundle\\": "src/"
     }
   },
+  "repositories": [
+    {
+      "type": "git",
+      "url": "https://github.com/mtonzar/SharedServicesBundle.git"
+    }
+  ],
   "require": {
+    "mtonzar/shared-services-bundle": "dev-master",
     "php": ">=8.1",
     "ext-ctype": "*",
     "ext-iconv": "*",
