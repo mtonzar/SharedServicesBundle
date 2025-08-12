@@ -8,7 +8,7 @@ use mtonzar\SharedServicesBundle\Service\HealthChecker\DatabaseHealthChecker;
 use mtonzar\SharedServicesBundle\Service\HealthChecker\CacheHealthChecker;
 use mtonzar\SharedServicesBundle\Service\HealthChecker\QueueHealthChecker;
 use mtonzar\SharedServicesBundle\Service\HealthChecker\ApiDependencyHealthChecker;
-use mtonzar\SharedServicesBundle\Service\HealthChecker\LivenesHealthChecker;
+use mtonzar\SharedServicesBundle\Service\HealthChecker\LivenessHealthChecker;
 
 class HealthCheckProvider implements ProviderInterface
 {
@@ -17,7 +17,7 @@ class HealthCheckProvider implements ProviderInterface
         // private CacheHealthChecker $cacheChecker,
         // private QueueHealthChecker $queueChecker,
          private ApiDependencyHealthChecker $apiDependencyChecker,
-         private LivenesHealthChecker $livenesChecker
+         private LivenessHealthChecker $livenessChecker
     ) {}
 
     public function provide(Operation $operation, array $uriVariables = [], array $context = []): array
@@ -28,8 +28,7 @@ class HealthCheckProvider implements ProviderInterface
         // $healthCheck->addCheck('cache', ...array_values($this->cacheChecker->check()));
         // $healthCheck->addCheck('queue', ...array_values($this->queueChecker->check()));
          $healthCheck->addCheck('external_apis', ...array_values($this->apiDependencyChecker->check()));
-         $healthCheck->addCheck('liveness', ...array_values($this->livenesChecker->check()));
-
+         $healthCheck->addCheck('liveness', ...array_values($this->livenessChecker->check()));
         return [$healthCheck];
     }
 }

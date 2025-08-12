@@ -2,7 +2,7 @@
 
 namespace mtonzar\SharedServicesBundle\Service\HealthChecker;
 
-class LivenesHealthChecker
+class LivenessHealthChecker
 {
     public function check(): array
     {
