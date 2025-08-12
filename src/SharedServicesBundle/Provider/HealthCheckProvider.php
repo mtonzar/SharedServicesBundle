@@ -17,7 +17,7 @@ class HealthCheckProvider implements ProviderInterface
         // private CacheHealthChecker $cacheChecker,
         // private QueueHealthChecker $queueChecker,
          private ApiDependencyHealthChecker $apiDependencyChecker,
-         private LivenessHealthChecker $livenessChecker,
+         private LivenessHealthChecker $livenessChecker
     ) {}
 
     public function provide(Operation $operation, array $uriVariables = [], array $context = []): array
