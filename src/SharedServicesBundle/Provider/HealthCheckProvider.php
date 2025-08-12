@@ -1,5 +1,4 @@
 <?php
-
 namespace mtonzar\SharedServicesBundle\Provider;
 
 use ApiPlatform\State\ProviderInterface;
@@ -10,32 +9,23 @@ use mtonzar\SharedServicesBundle\Service\HealthChecker\CacheHealthChecker;
 use mtonzar\SharedServicesBundle\Service\HealthChecker\QueueHealthChecker;
 use mtonzar\SharedServicesBundle\Service\HealthChecker\ApiDependencyHealthChecker;
 
-
 class HealthCheckProvider implements ProviderInterface
 {
     public function __construct(
         private DatabaseHealthChecker $databaseChecker,
         // private CacheHealthChecker $cacheChecker,
         // private QueueHealthChecker $queueChecker,
-        private ApiDependencyHealthChecker $apiDependencyChecker,
-        // private LivenessHealthChecker $livenessChecker
+         private ApiDependencyHealthChecker $apiDependencyChecker
     ) {}
 
     public function provide(Operation $operation, array $uriVariables = [], array $context = []): array
     {
         $healthCheck = new HealthCheck();
 
-        // Ajout des checks
         $healthCheck->addCheck('database', ...array_values($this->databaseChecker->check()));
-        $healthCheck->addCheck('external_apis', ...array_values($this->apiDependencyChecker->check()));
-        // $healthCheck->addCheck('liveness', ...array_values($this->livenessChecker->check()));
-        // Déterminer le status global
-        foreach ($healthCheck->getCheck() as $check) {
-            if ($check['status'] !== 'healthy') {
-                $healthCheck->setStatus('degraded');
-                break;
-            }
-        }
+        // $healthCheck->addCheck('cache', ...array_values($this->cacheChecker->check()));
+        // $healthCheck->addCheck('queue', ...array_values($this->queueChecker->check()));
+         $healthCheck->addCheck('external_apis', ...array_values($this->apiDependencyChecker->check()));
 
         return [$healthCheck];
     }
