@@ -6,12 +6,12 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 class ApiDependencyHealthChecker
 {
-    public function __construct(private HttpClientInterface $client) {}
+    public function __construct(private HttpClientInterface $client, private string $apiUrl) {}
 
     public function check(): array
     {
         try {
-            $response = $this->client->request('GET', 'https://api.example.com/health');
+            $response = $this->client->request('GET',  $this->apiUrl);
             $statusCode = $response->getStatusCode();
 
             return [

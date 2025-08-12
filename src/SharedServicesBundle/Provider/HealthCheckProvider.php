@@ -15,7 +15,7 @@ class HealthCheckProvider implements ProviderInterface
         private DatabaseHealthChecker $databaseChecker,
         // private CacheHealthChecker $cacheChecker,
         // private QueueHealthChecker $queueChecker,
-        // private ApiDependencyHealthChecker $apiDependencyChecker
+         private ApiDependencyHealthChecker $apiDependencyChecker
     ) {}
 
     public function provide(Operation $operation, array $uriVariables = [], array $context = []): array
@@ -25,7 +25,7 @@ class HealthCheckProvider implements ProviderInterface
         $healthCheck->addCheck('database', ...array_values($this->databaseChecker->check()));
         // $healthCheck->addCheck('cache', ...array_values($this->cacheChecker->check()));
         // $healthCheck->addCheck('queue', ...array_values($this->queueChecker->check()));
-        // $healthCheck->addCheck('external_apis', ...array_values($this->apiDependencyChecker->check()));
+         $healthCheck->addCheck('external_apis', ...array_values($this->apiDependencyChecker->check()));
 
         return [$healthCheck];
     }
