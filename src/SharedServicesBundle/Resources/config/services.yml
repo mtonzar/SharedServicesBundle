@@ -5,4 +5,5 @@ services:
             $cacheChecker: '@mtonzar\SharedServicesBundle\Service\HealthChecker\CacheHealthChecker'
             $queueChecker: '@mtonzar\SharedServicesBundle\Service\HealthChecker\QueueHealthChecker'
             $apiDependencyChecker: '@mtonzar\SharedServicesBundle\Service\HealthChecker\ApiDependencyHealthChecker'
+            $livenessChecker : '@mtonzar\SharedServicesBundle\Service\HealthChecker\LivenessHealthChecker'
         tags: ['api_platform.state_provider']
