@@ -9,7 +9,7 @@ use mtonzar\SharedServicesBundle\Service\HealthChecker\DatabaseHealthChecker;
 use mtonzar\SharedServicesBundle\Service\HealthChecker\CacheHealthChecker;
 use mtonzar\SharedServicesBundle\Service\HealthChecker\QueueHealthChecker;
 use mtonzar\SharedServicesBundle\Service\HealthChecker\ApiDependencyHealthChecker;
-use mtonzar\SharedServicesBundle\Service\HealthChecker\LivenessHealthChecker;
+
 
 class HealthCheckProvider implements ProviderInterface
 {
