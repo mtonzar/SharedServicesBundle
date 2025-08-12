@@ -1,10 +1,9 @@
 <?php
 
-
-namespace mtonzar\SharedServiceBundle;
+namespace mtonzar\SharedServicesBundle;
 
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
-class SharedHealthCheckBundle extends Bundle
+class SharedServicesBundle extends Bundle
 {
 }
