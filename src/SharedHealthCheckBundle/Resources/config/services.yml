@@ -1,8 +1,0 @@
-services:
-    mtonzar\SharedServiceBundle\Provider\HealthCheckProvider:
-        arguments:
-            $databaseChecker: '@mtonzar\SharedServiceBundle\Service\HealthChecker\DatabaseHealthChecker'
-            $cacheChecker: '@mtonzar\SharedServiceBundle\Service\HealthChecker\CacheHealthChecker'
-            $queueChecker: '@mtonzar\SharedServiceBundle\Service\HealthChecker\QueueHealthChecker'
-            $apiDependencyChecker: '@mtonzar\SharedServiceBundle\Service\HealthChecker\ApiDependencyHealthChecker'
-        tags: ['api_platform.state_provider']

@@ -1,5 +1,4 @@
 <?php
-// src/Entity/HealthCheck.php
 namespace mtonzar\SharedServicesBundle\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
