@@ -1,5 +1,4 @@
 <?php
-
 namespace mtonzar\SharedServicesBundle\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
@@ -11,42 +10,18 @@ use ApiPlatform\Metadata\GetCollection;
 )]
 class HealthCheck
 {
-    private string $status = 'healthy';
+    private array $checks = [];
 
-    private \DateTimeImmutable $timestamp;
-
-    private array $check = [];
-
-    public function __construct()
+    public function addCheck(string $service, string $status, string $details): void
     {
-        $this->timestamp = new \DateTimeImmutable();
-    }
-
-    public function getStatus(): string
-    {
-        return $this->status;
-    }
-
-    public function setStatus(string $status): void
-    {
-        $this->status = $status;
-    }
-
-    public function getTimestamp(): \DateTimeImmutable
-    {
-        return $this->timestamp;
-    }
-
-    public function getCheck(): array
-    {
-        return $this->check;
-    }
-
-    public function addCheck(string $service, string $status, string $message): void
-    {
-        $this->check[$service] = [
+        $this->checks[$service] = [
             'status' => $status,
-            'message' => $message,
+            'details' => $details
         ];
+    }
+
+    public function getChecks(): array
+    {
+        return $this->checks;
     }
 }
