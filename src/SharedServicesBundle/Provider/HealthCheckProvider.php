@@ -18,28 +18,26 @@ class HealthCheckProvider implements ProviderInterface
         // private CacheHealthChecker $cacheChecker,
         // private QueueHealthChecker $queueChecker,
         private ApiDependencyHealthChecker $apiDependencyChecker,
-        private LivenessHealthChecker $livenessChecker,
-
+        private LivenessHealthChecker $livenessChecker
     ) {}
-
+    
     public function provide(Operation $operation, array $uriVariables = [], array $context = []): array
     {
         $healthCheck = new HealthCheck();
-
-        // $healthCheck->addCheck('database', ...array_values($this->databaseChecker->check()));
-        // $healthCheck->addCheck('cache', ...array_values($this->cacheChecker->check()));
-        // $healthCheck->addCheck('queue', ...array_values($this->queueChecker->check()));
-        // $healthCheck->addCheck('external_apis', ...array_values($this->apiDependencyChecker->check()));
-        // $healthCheck->addCheck('liveness', ...array_values($this->livenessChecker->check()));
-
-
-        $databaseStatus = $this->databaseChecker->check();
-        $healthCheck->addCheck('database', $databaseStatus['status'], $databaseStatus['details']);
-
-        $livenessStatus = $this->livenessChecker->check();
-        $healthCheck->addCheck('liveness', $livenessStatus['status'], $livenessStatus['message']);
-
-
+    
+        // Ajout des checks
+        $healthCheck->addCheck('liveness', ...array_values($this->livenessChecker->check()));
+        $healthCheck->addCheck('database', ...array_values($this->databaseChecker->check()));
+        $healthCheck->addCheck('external_apis', ...array_values($this->apiDependencyChecker->check()));
+    
+        // Déterminer le status global
+        foreach ($healthCheck->getCheck() as $check) {
+            if ($check['status'] !== 'healthy') {
+                $healthCheck->setStatus('degraded');
+                break;
+            }
+        }
+    
         return [$healthCheck];
     }
 }
