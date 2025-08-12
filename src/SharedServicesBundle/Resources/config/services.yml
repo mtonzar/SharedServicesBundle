@@ -7,3 +7,23 @@ services:
             $apiDependencyChecker: '@mtonzar\SharedServicesBundle\Service\HealthChecker\ApiDependencyHealthChecker'
             $livenessChecker: '@mtonzar\SharedServicesBundle\Service\HealthChecker\LivenessHealthChecker'
         tags: ['api_platform.state_provider']
+
+    mtonzar\SharedServicesBundle\Service\HealthChecker\DatabaseHealthChecker:
+        autowire: true
+        public: true
+
+    mtonzar\SharedServicesBundle\Service\HealthChecker\CacheHealthChecker:
+        autowire: true
+        public: true
+
+    mtonzar\SharedServicesBundle\Service\HealthChecker\QueueHealthChecker:
+        autowire: true
+        public: true
+
+    mtonzar\SharedServicesBundle\Service\HealthChecker\ApiDependencyHealthChecker:
+        autowire: true
+        public: true
+
+    mtonzar\SharedServicesBundle\Service\HealthChecker\LivenessHealthChecker:
+        autowire: true
+        public: true
