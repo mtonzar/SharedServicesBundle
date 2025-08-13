@@ -1,23 +1,43 @@
 services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: true
+
+    # HealthCheck services
+    mtonzar\SharedServicesBundle\Service\HealthChecker\DatabaseHealthChecker:
+        arguments:
+            $connection: '@doctrine.dbal.default_connection'
+
+    mtonzar\SharedServicesBundle\Service\HealthChecker\ApiDependencyHealthChecker:
+        arguments:
+            $client: '@http_client'
+            $apiUrl: '%env(EXTERNAL_API_URL)%'
+
+    mtonzar\SharedServicesBundle\Service\HealthChecker\LivenessHealthChecker: ~
+
+    mtonzar\SharedServicesBundle\Service\HealthChecker\ReadinessHealthChecker:
+        arguments:
+            $connection: '@doctrine.dbal.default_connection'
+            $cache: '@cache.app'
+            $httpClient: '@http_client'
+            $externalServiceUrl: '%env(EXTERNAL_SERVICE_URL)%'
+
+    mtonzar\SharedServicesBundle\Service\HealthChecker\MultiServiceHealthChecker:
+        arguments:
+            $services:
+                serviceA: 'http://service-a:8001/health/check'
+                serviceB: 'http://service-b:8002/health/check'
+
+    # Providers
     mtonzar\SharedServicesBundle\Provider\HealthCheckProvider:
         arguments:
             $databaseChecker: '@mtonzar\SharedServicesBundle\Service\HealthChecker\DatabaseHealthChecker'
-            $cacheChecker: '@mtonzar\SharedServicesBundle\Service\HealthChecker\CacheHealthChecker'
-            $queueChecker: '@mtonzar\SharedServicesBundle\Service\HealthChecker\QueueHealthChecker'
             $apiDependencyChecker: '@mtonzar\SharedServicesBundle\Service\HealthChecker\ApiDependencyHealthChecker'
             $livenessChecker: '@mtonzar\SharedServicesBundle\Service\HealthChecker\LivenessHealthChecker'
-            $readinessChecker: '@mtonzar\SharedServicesBundle\Service\HealthChecker\ReadinessHealthChecker'
-
+        tags: ['api_platform.state_provider']
 
     mtonzar\SharedServicesBundle\Provider\MultiServiceHealthCheckProvider:
         arguments:
             $multiChecker: '@mtonzar\SharedServicesBundle\Service\HealthChecker\MultiServiceHealthChecker'
-    tags: ['api_platform.state_provider']
-
-    mtonzar\SharedServicesBundle\Service\HealthChecker\DatabaseHealthChecker: ~
-    mtonzar\SharedServicesBundle\Service\HealthChecker\CacheHealthChecker: ~
-    mtonzar\SharedServicesBundle\Service\HealthChecker\QueueHealthChecker: ~
-    mtonzar\SharedServicesBundle\Service\HealthChecker\ApiDependencyHealthChecker: ~
-    mtonzar\SharedServicesBundle\Service\HealthChecker\LivenessHealthChecker: ~
-    mtonzar\SharedServicesBundle\Service\HealthChecker\ReadinessHealthChecker: ~
-    mtonzar\SharedServicesBundle\Service\HealthChecker\MultiServiceHealthChecker: ~
+        tags: ['api_platform.state_provider']
