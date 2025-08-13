@@ -24,11 +24,13 @@ services:
             $externalServiceUrl: '%env(EXTERNAL_SERVICE_URL)%'
 
     mtonzar\SharedServicesBundle\Service\HealthChecker\MultiServiceHealthChecker:
+        autowire: true
+        autoconfigure: true
+        public: true
         arguments:
             $services:
                 serviceA: 'http://service-a:8001/health/check'
                 serviceB: 'http://service-b:8002/health/check'
-
     # Providers
     mtonzar\SharedServicesBundle\Provider\HealthCheckProvider:
         arguments:
