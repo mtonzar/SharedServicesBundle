@@ -6,11 +6,11 @@ namespace mtonzar\SharedServicesBundle\Provider;
 use ApiPlatform\State\ProviderInterface;
 use ApiPlatform\Metadata\Operation;
 use mtonzar\SharedServicesBundle\Entity\HealthCheck;
-use mtonzar\SharedServicesBundle\Service\HealthChecker\MultiServiceHealthChecker;
+use mtonzar\SharedServicesBundle\Service\HealthChecker\MultiServicesHealthChecker;
 
 class MultiServiceHealthCheckProvider implements ProviderInterface
 {
-    public function __construct(private MultiServiceHealthChecker $multiChecker) {}
+    public function __construct(private MultiServicesHealthChecker $multiChecker) {}
 
     public function provide(Operation $operation, array $uriVariables = [], array $context = []): array
     {

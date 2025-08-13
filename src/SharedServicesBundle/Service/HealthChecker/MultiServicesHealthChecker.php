@@ -2,7 +2,7 @@
 
 namespace mtonzar\SharedServicesBundle\Service\HealthChecker;
 
-class MultiServiceHealthChecker
+class MultiServicesHealthChecker
 {
     private array $services;
 

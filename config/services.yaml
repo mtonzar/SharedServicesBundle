@@ -13,8 +13,8 @@ services:
     mtonzar\SharedServicesBundle\Service\HealthChecker\LivenessHealthChecker: ~
     mtonzar\SharedServicesBundle\Service\HealthChecker\ReadinessHealthChecker: ~
 
-    # MultiServiceHealthChecker avec tableau vide, à remplir dans le microservice
-    mtonzar\SharedServicesBundle\Service\HealthChecker\MultiServiceHealthChecker:
+    # MultiServicesHealthChecker avec tableau vide, à remplir dans le microservice
+    mtonzar\SharedServicesBundle\Service\HealthChecker\MultiServicesHealthChecker:
         arguments:
             $services: []
 
