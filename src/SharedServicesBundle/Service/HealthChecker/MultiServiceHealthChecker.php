@@ -1,4 +1,5 @@
 <?php
+
 namespace mtonzar\SharedServicesBundle\Service\HealthChecker;
 
 class MultiServiceHealthChecker

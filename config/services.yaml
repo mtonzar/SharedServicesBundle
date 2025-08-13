@@ -20,4 +20,4 @@ services:
     mtonzar\SharedServicesBundle\Service\HealthChecker\ApiDependencyHealthChecker: ~
     mtonzar\SharedServicesBundle\Service\HealthChecker\LivenessHealthChecker: ~
     mtonzar\SharedServicesBundle\Service\HealthChecker\ReadinessHealthChecker: ~
-    mtonzar\SharedServicesBundle\Service\HealthChecker\MultiServiceHealthChecker: ~
+    mtonzar\SharedServicesBundle\Service\HealthChecker\MultiServiceHealthChecker: ~  
