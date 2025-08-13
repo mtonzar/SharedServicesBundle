@@ -26,7 +26,7 @@
     "symfony/dotenv": "6.4.*",
     "symfony/expression-language": "6.4.*",
     "symfony/flex": "^2",
-    "symfony/framework-bundle":"^5.4 || ^6.0" ,
+    "symfony/framework-bundle": "^5.4 || ^6.0",
     "symfony/http-client": "6.4.*",
     "symfony/messenger": "6.4.*",
     "symfony/property-access": "6.4.*",
@@ -51,7 +51,6 @@
       "App\\Tests\\": "tests/"
     }
   },
-
   "scripts": {
     "auto-scripts": {
       "cache:clear": "symfony-cmd",
