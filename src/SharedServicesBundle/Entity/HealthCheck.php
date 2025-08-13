@@ -11,12 +11,11 @@ use ApiPlatform\Metadata\GetCollection;
 class HealthCheck
 {
     private array $checks = [];
-    private string $timestamp;
+    private \DateTimeImmutable $checkedAt;
 
     public function __construct()
     {
-        // Stocke l'heure au moment de la création de l'objet
-        $this->timestamp = (new \DateTimeImmutable())->format(\DateTimeInterface::ATOM);
+        $this->checkedAt = new \DateTimeImmutable();
     }
 
     public function addCheck(string $service, string $status, string $details): void
@@ -32,8 +31,8 @@ class HealthCheck
         return $this->checks;
     }
 
-    public function getTimestamp(): string
+    public function getCheckedAt(): \DateTimeImmutable
     {
-        return $this->timestamp;
+        return $this->checkedAt;
     }
 }
