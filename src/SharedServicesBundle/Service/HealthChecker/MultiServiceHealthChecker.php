@@ -14,6 +14,7 @@ class MultiServiceHealthChecker
     public function check(): array
     {
         $results = [];
+
         foreach ($this->services as $name => $url) {
             try {
                 $response = @file_get_contents($url);
