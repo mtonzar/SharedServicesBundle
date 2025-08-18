@@ -31,8 +31,8 @@ class HealthCheck
         return $this->checks;
     }
 
-    public function getCheckedAt(): \DateTimeImmutable
+    public function getTimestamp(): string
     {
-        return $this->checkedAt;
+        return $this->checkedAt->format('c');
     }
 }
