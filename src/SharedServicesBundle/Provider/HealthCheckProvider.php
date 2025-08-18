@@ -1,5 +1,4 @@
 <?php
-
 namespace mtonzar\SharedServicesBundle\Provider;
 
 use ApiPlatform\State\ProviderInterface;
@@ -26,56 +25,33 @@ class HealthCheckProvider implements ProviderInterface
     {
         $healthCheck = new HealthCheck();
 
-        // Database
+        // Ancien mode
         if ($this->databaseChecker) {
-            $result = $this->databaseChecker->check();
-            $healthCheck->addCheck('database', $result['status'], $result['details']);
+            $healthCheck->addCheck('database', ...array_values($this->databaseChecker->check()));
         }
-
-        // API externe
         if ($this->apiDependencyChecker) {
-            $result = $this->apiDependencyChecker->check();
-            $healthCheck->addCheck('external_api', $result['status'], $result['details']);
+            $healthCheck->addCheck('external_apis', ...array_values($this->apiDependencyChecker->check()));
         }
-
-        // Liveness
         if ($this->livenessChecker) {
-            $result = $this->livenessChecker->check();
-            $healthCheck->addCheck('liveness', $result['status'], $result['details']);
+            $healthCheck->addCheck('liveness', ...array_values($this->livenessChecker->check()));
         }
 
-        // Ping d’autres services
         foreach ($this->services as $name => $url) {
-            $result = $this->pingService($url);
-            $healthCheck->addCheck($name, $result['status'], $result['details']);
+            $status = $this->pingService($url) ? 'healthy' : 'down';
+            $healthCheck->addCheck($name, $status, "Ping $url returned $status");
         }
 
         return [$healthCheck];
     }
 
-
-    private function pingService(string $url): array
+    private function pingService(string $url): bool
     {
         try {
             $context = stream_context_create(['http' => ['timeout' => 2]]);
             $result = @file_get_contents($url, false, $context);
-
-            if ($result === false) {
-                return [
-                    'status' => 'down',
-                    'details' => "Ping $url failed"
-                ];
-            }
-
-            return [
-                'status' => 'healthy',
-                'details' => "Ping $url successful"
-            ];
-        } catch (\Throwable $e) {
-            return [
-                'status' => 'down',
-                'details' => "Ping $url exception: " . $e->getMessage()
-            ];
+            return $result !== false;
+        } catch (\Exception $e) {
+            return false;
         }
     }
 }
