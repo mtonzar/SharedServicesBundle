@@ -26,7 +26,7 @@ class HealthCheckProvider implements ProviderInterface
                     $status = $this->databaseChecker
                         ? $this->databaseChecker->check($urlOrDsn)
                         : ['status' => 'unknown', 'details' => 'No DB checker'];
-                } else { 
+                } else {
                     $status = $this->pingService($urlOrDsn);
                 }
 
@@ -52,14 +52,14 @@ class HealthCheckProvider implements ProviderInterface
         try {
             $context = stream_context_create(['http' => ['timeout' => 2]]);
             $result = @file_get_contents($url, false, $context);
-
+            var_dump($url);
             if ($result === false) {
-                return ['status' => 'down', 'details' => "Ping $url failed"];
+                return ['status' => 'down', 'details' => "$url"];
             }
 
-            return ['status' => 'healthy', 'details' => "Ping $url successful"];
+            return ['status' => 'healthy', 'details' => "$url"];
         } catch (\Throwable $e) {
-            return ['status' => 'down', 'details' => "Ping $url exception: " . $e->getMessage()];
+            return ['status' => 'down', 'details' => "$url" . $e->getMessage()];
         }
     }
 }
