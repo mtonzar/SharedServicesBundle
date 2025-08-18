@@ -7,14 +7,25 @@ class MultiServicesHealthChecker
 
     public function check(): array
     {
-        // Exemple de logique
         $results = [];
         foreach ($this->services as $name => $url) {
+            $status = $this->pingService($url) ? 'healthy' : 'down';
             $results[$name] = [
-                'status' => 'healthy',
-                'details' => ['url' => $url]
+                'status' => $status,
+                'details' => ['url' => $url, 'message' => $status === 'healthy' ? 'Ping successful' : 'Ping failed']
             ];
         }
         return $results;
+    }
+
+    private function pingService(string $url): bool
+    {
+        try {
+            $context = stream_context_create(['http' => ['timeout' => 2]]);
+            $result = @file_get_contents($url, false, $context);
+            return $result !== false;
+        } catch (\Throwable) {
+            return false;
+        }
     }
 }
