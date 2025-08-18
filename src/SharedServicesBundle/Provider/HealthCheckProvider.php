@@ -37,21 +37,40 @@ class HealthCheckProvider implements ProviderInterface
         }
 
         foreach ($this->services as $name => $url) {
-            $status = $this->pingService($url) ? 'healthy' : 'down';
-            $healthCheck->addCheck($name, $status, "Ping $url returned $status");
+            $result = $this->pingService($url); // renvoie ['status' => ..., 'details' => ...]
+            $healthCheck->addCheck(
+                $name,
+                $result['status'], // prend le vrai status
+                json_encode(['url' => $url, 'message' => $result['details']]) // détails JSON
+            );
         }
 
         return [$healthCheck];
     }
 
-    private function pingService(string $url): bool
+    private function pingService(string $url): array
     {
         try {
             $context = stream_context_create(['http' => ['timeout' => 2]]);
             $result = @file_get_contents($url, false, $context);
-            return $result !== false;
-        } catch (\Exception $e) {
-            return false;
+    
+            if ($result === false) {
+                return [
+                    'status' => 'down',
+                    'details' => "Ping $url failed"
+                ];
+            }
+    
+            return [
+                'status' => 'healthy',
+                'details' => "Ping $url successful"
+            ];
+        } catch (\Throwable $e) {
+            return [
+                'status' => 'down',
+                'details' => "Ping $url exception: " . $e->getMessage()
+            ];
         }
     }
+    
 }
