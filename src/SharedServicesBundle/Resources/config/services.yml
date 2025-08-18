@@ -1,17 +1,12 @@
 # SharedServicesBundle/Resources/config/services.yaml
 services:
-    _defaults:
-        autowire: true
-        autoconfigure: true
-        public: true
-
-    # HealthCheckers
-    mtonzar\SharedServicesBundle\Service\HealthChecker\DatabaseHealthChecker: ~
-    mtonzar\SharedServicesBundle\Service\HealthChecker\CacheHealthChecker: ~
-    mtonzar\SharedServicesBundle\Service\HealthChecker\QueueHealthChecker: ~
-    mtonzar\SharedServicesBundle\Service\HealthChecker\ApiDependencyHealthChecker: ~
-    mtonzar\SharedServicesBundle\Service\HealthChecker\LivenessHealthChecker: ~
-    mtonzar\SharedServicesBundle\Service\HealthChecker\ReadinessHealthChecker: ~
+    mtonzar\SharedServicesBundle\Provider\HealthCheckProvider:
+        arguments:
+            $databaseChecker: '@mtonzar\SharedServicesBundle\Service\HealthChecker\DatabaseHealthChecker'
+            $cacheChecker: '@mtonzar\SharedServicesBundle\Service\HealthChecker\CacheHealthChecker'
+            $queueChecker: '@mtonzar\SharedServicesBundle\Service\HealthChecker\QueueHealthChecker'
+            $apiDependencyChecker: '@mtonzar\SharedServicesBundle\Service\HealthChecker\ApiDependencyHealthChecker'
+        tags: ['api_platform.state_provider']
 
     # Multi-service checker
     mtonzar\SharedServicesBundle\Service\HealthChecker\MultiServicesHealthChecker: 

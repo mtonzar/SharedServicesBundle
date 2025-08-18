@@ -36,7 +36,6 @@ class HealthCheckProvider implements ProviderInterface
             $healthCheck->addCheck('liveness', ...array_values($this->livenessChecker->check()));
         }
 
-        // Nouveau mode : ping vers microservices externes
         foreach ($this->services as $name => $url) {
             $status = $this->pingService($url) ? 'healthy' : 'down';
             $healthCheck->addCheck($name, $status, "Ping $url returned $status");
