@@ -17,8 +17,14 @@ class MultiServiceHealthCheckProvider implements ProviderInterface
         $healthCheck = new HealthCheck();
 
         foreach ($this->multiChecker->check() as $serviceName => $serviceChecks) {
-            $healthCheck->addCheck($serviceName, 'grouped', $serviceChecks);
+
+            $healthCheck->addCheck(
+                $serviceName,
+                'grouped', 
+                json_encode($serviceChecks) 
+            );
         }
+        
 
         return [$healthCheck];
     }
