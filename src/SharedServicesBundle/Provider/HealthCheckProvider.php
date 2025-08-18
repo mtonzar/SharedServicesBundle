@@ -26,7 +26,7 @@ class HealthCheckProvider implements ProviderInterface
                     $status = $this->databaseChecker
                         ? $this->databaseChecker->check($urlOrDsn)
                         : ['status' => 'unknown', 'details' => 'No DB checker'];
-                } else { // api ou ping
+                } else { 
                     $status = $this->pingService($urlOrDsn);
                 }
 
@@ -40,7 +40,7 @@ class HealthCheckProvider implements ProviderInterface
             $healthCheck->addCheck(
                 $serviceName,
                 $overallStatus,
-                json_encode($serviceDetails) // toujours string pour addCheck
+                json_encode($serviceDetails)
             );
         }
 
