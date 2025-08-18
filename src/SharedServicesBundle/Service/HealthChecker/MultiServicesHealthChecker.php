@@ -9,55 +9,63 @@ class MultiServicesHealthChecker
     {
         $results = [];
 
-        foreach ($this->services as $name => $service) {
-            $serviceResult = [];
+        foreach ($this->services as $serviceName => $config) {
+            $checks = [];
 
-            // Vérification DB si configurée
-            if (isset($service['databaseChecker'])) {
-                $dbResult = $service['databaseChecker']->check();
-                $serviceResult['database'] = [
-                    'status' => $dbResult['status'],
-                    'details' => $dbResult['details']
+            // Vérifier la base de données
+            if (isset($config['database'])) {
+                $dbOk = $this->checkDatabase($config['database']);
+                $checks[] = [
+                    'check' => 'database',
+                    'status' => $dbOk ? 'healthy' : 'down',
+                    'details' => $dbOk ? 'Connexion DB OK' : 'Connexion DB échouée'
                 ];
             }
 
-            // Vérification API externe si configurée
-            if (isset($service['apiChecker'])) {
-                $apiResult = $service['apiChecker']->check();
-                $serviceResult['external_api'] = [
-                    'status' => $apiResult['status'],
-                    'details' => $apiResult['details']
+            // Vérifier une API externe
+            if (isset($config['api'])) {
+                $apiOk = $this->pingUrl($config['api']);
+                $checks[] = [
+                    'check' => 'external_api',
+                    'status' => $apiOk ? 'healthy' : 'down',
+                    'details' => $apiOk ? 'API OK' : 'API indisponible'
                 ];
             }
 
-            // Ping du service
-            if (isset($service['url'])) {
-                $pingResult = $this->pingService($service['url']);
-                $serviceResult['ping'] = [
-                    'status' => $pingResult['status'],
-                    'details' => $pingResult['details']
+            // Vérifier un ping (endpoint de l’app elle-même ou autre service)
+            if (isset($config['ping'])) {
+                $pingResult = $this->pingUrl($config['ping']);
+                $checks[] = [
+                    'check' => 'ping',
+                    'status' => $pingResult ? 'healthy' : 'down',
+                    'details' => $pingResult ? "Ping {$config['ping']} OK" : "Ping {$config['ping']} failed"
                 ];
             }
 
-            $results[$name] = $serviceResult;
+            $results[$serviceName] = $checks;
         }
 
         return $results;
     }
 
-    private function pingService(string $url): array
+    private function checkDatabase(string $dsn): bool
+    {
+        try {
+            $pdo = new \PDO($dsn);
+            return $pdo !== null;
+        } catch (\Throwable $e) {
+            return false;
+        }
+    }
+
+    private function pingUrl(string $url): bool
     {
         try {
             $context = stream_context_create(['http' => ['timeout' => 2]]);
             $result = @file_get_contents($url, false, $context);
-
-            if ($result === false) {
-                return ['status' => 'down', 'details' => "Ping $url failed"];
-            }
-
-            return ['status' => 'healthy', 'details' => "Ping $url successful"];
+            return $result !== false;
         } catch (\Throwable $e) {
-            return ['status' => 'down', 'details' => "Ping $url exception: " . $e->getMessage()];
+            return false;
         }
     }
 }
