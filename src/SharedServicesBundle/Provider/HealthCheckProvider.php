@@ -1,81 +1,41 @@
 <?php
 
-namespace mtonzar\SharedServicesBundle\Provider;
+namespace App\Controller;
 
-use ApiPlatform\State\ProviderInterface;
-use ApiPlatform\Metadata\Operation;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\Routing\Annotation\Route;
+use ApiPlatform\Metadata\Get;
+use mtonzar\SharedServicesBundle\Provider\HealthCheckProvider;
 use mtonzar\SharedServicesBundle\Entity\HealthCheck;
-use mtonzar\SharedServicesBundle\Service\HealthChecker\DatabaseHealthChecker;
-use mtonzar\SharedServicesBundle\Service\HealthChecker\ApiDependencyHealthChecker;
-use mtonzar\SharedServicesBundle\Service\HealthChecker\LivenessHealthChecker;
 
-class HealthCheckProvider implements ProviderInterface
+class HealthCheckController
 {
-    private array $services;
+    public function __construct(private HealthCheckProvider $healthCheckProvider) {}
 
-    public function __construct(
-        private ?DatabaseHealthChecker $databaseChecker = null,
-        private ?ApiDependencyHealthChecker $apiDependencyChecker = null,
-        private ?LivenessHealthChecker $livenessChecker = null,
-        array $services = []
-    ) {
-        $this->services = $services;
-    }
-
-    public function provide(Operation $operation, array $uriVariables = [], array $context = []): array
+    #[Route('/health/check', name: 'health_check')]
+    public function healthCheck(): JsonResponse
     {
-        $healthCheck = new HealthCheck();
+        $operation = new Get();
+        $results = $this->healthCheckProvider->provide($operation);
 
-        // Database
-        if ($this->databaseChecker) {
-            $result = $this->databaseChecker->check();
-            $healthCheck->addCheck('database', $result['status'], $result['details']);
-        }
+        /** @var HealthCheck $healthCheck */
+        $healthCheck = $results[0];
 
-        // API externe
-        if ($this->apiDependencyChecker) {
-            $result = $this->apiDependencyChecker->check();
-            $healthCheck->addCheck('external_api', $result['status'], $result['details']);
-        }
-
-        // Liveness
-        if ($this->livenessChecker) {
-            $result = $this->livenessChecker->check();
-            $healthCheck->addCheck('liveness', $result['status'], $result['details']);
-        }
-
-        // Ping d’autres services
-        foreach ($this->services as $name => $url) {
-            $result = $this->pingService($url);
-            $healthCheck->addCheck($name, $result['status'], $result['details']);
-        }
-
-        return [$healthCheck];
-    }
-
-
-    private function pingService(string $url): array
-    {
-        try {
-            $context = stream_context_create(['http' => ['timeout' => 2]]);
-            $result = @file_get_contents($url, false, $context);
-
-            if ($result === false) {
-                return [
-                    'status' => 'down',
-                    'details' => "Ping $url failed"
-                ];
+        // Déterminer le code HTTP : si un service est down, status = 503
+        $status = 200;
+        foreach ($healthCheck->getChecks() as $check) {
+            if ($check['status'] !== 'healthy') {
+                $status = 503;
+                break;
             }
-
-            return [
-                'status' => 'healthy',
-                'details' => "Ping $url successful"
-            ];
-        } catch (\Throwable $e) {
-            return [
-                'status' => 'down',
-                'details' => "Ping $url exception: " . $e->getMessage()
-            ];
         }
+
+        // Construire la réponse JSON
+        $responseData = [
+            'timestamp' => $healthCheck->getTimestamp(),
+            'checks'    => $healthCheck->getChecks()
+        ];
+
+        return new JsonResponse($responseData, $status);
     }
 }
