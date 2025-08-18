@@ -52,7 +52,6 @@ class HealthCheckProvider implements ProviderInterface
         try {
             $context = stream_context_create(['http' => ['timeout' => 2]]);
             $result = @file_get_contents($url, false, $context);
-            var_dump($url);
             if ($result === false) {
                 return ['status' => 'down', 'details' => "$url"];
             }
