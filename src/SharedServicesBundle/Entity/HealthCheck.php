@@ -18,7 +18,7 @@ class HealthCheck
         $this->checkedAt = new \DateTimeImmutable();
     }
 
-    public function addCheck(string $service, string $status, string $details): void
+    public function addCheck(string $service, string $status, array|string $details): void
     {
         $this->checks[$service] = [
             'status' => $status,

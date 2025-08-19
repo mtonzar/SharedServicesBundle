@@ -40,7 +40,7 @@ class HealthCheckProvider implements ProviderInterface
             $healthCheck->addCheck(
                 $serviceName,
                 $overallStatus,
-                json_encode($serviceDetails)
+                $serviceDetails   // ✅ plus de json_encode
             );
         }
 
@@ -53,12 +53,12 @@ class HealthCheckProvider implements ProviderInterface
             $context = stream_context_create(['http' => ['timeout' => 2]]);
             $result = @file_get_contents($url, false, $context);
             if ($result === false) {
-                return ['status' => 'down', 'details' => "$url"];
+                return ['status' => 'down', 'details' => $url];
             }
 
-            return ['status' => 'healthy', 'details' => "$url"];
+            return ['status' => 'healthy', 'details' => $url];
         } catch (\Throwable $e) {
-            return ['status' => 'down', 'details' => "$url" . $e->getMessage()];
+            return ['status' => 'down', 'details' => $url . ' ' . $e->getMessage()];
         }
     }
 }
