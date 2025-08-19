@@ -1,4 +1,5 @@
 <?php
+
 namespace mtonzar\SharedServicesBundle\Provider;
 
 use ApiPlatform\State\ProviderInterface;
@@ -46,7 +47,7 @@ class HealthCheckProvider implements ProviderInterface
             $healthCheck->addCheck(
                 $serviceName,
                 $overallStatus,
-                $serviceDetails   // ✅ tableau structuré
+                $serviceDetails
             );
         }
 
