@@ -25,4 +25,21 @@ class ApiDependencyHealthChecker
             ];
         }
     }
+    public function checkOne(string $url): array
+    {
+        try {
+            $response = $this->client->request('GET', $url, ['timeout' => 2]);
+            $statusCode = $response->getStatusCode();
+
+            return [
+                'status' => $statusCode === 200 ? 'healthy' : 'down',
+                'details' => $url
+            ];
+        } catch (\Throwable $e) {
+            return [
+                'status' => 'down',
+                'details' => $url
+            ];
+        }
+    }
 }

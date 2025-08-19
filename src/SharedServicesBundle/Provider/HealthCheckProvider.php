@@ -5,12 +5,14 @@ use ApiPlatform\State\ProviderInterface;
 use ApiPlatform\Metadata\Operation;
 use mtonzar\SharedServicesBundle\Entity\HealthCheck;
 use mtonzar\SharedServicesBundle\Service\HealthChecker\DatabaseHealthChecker;
+use mtonzar\SharedServicesBundle\Service\HealthChecker\ApiDependencyHealthChecker;
 
 class HealthCheckProvider implements ProviderInterface
 {
     public function __construct(
         private ?DatabaseHealthChecker $databaseChecker = null,
-        private array $services = []
+        private ?ApiDependencyHealthChecker $apiChecker = null,
+        private array $services = []  // config.yaml => services list
     ) {}
 
     public function provide(Operation $operation, array $uriVariables = [], array $context = []): array
@@ -26,8 +28,12 @@ class HealthCheckProvider implements ProviderInterface
                     $status = $this->databaseChecker
                         ? $this->databaseChecker->check($urlOrDsn)
                         : ['status' => 'unknown', 'details' => 'No DB checker'];
+                } elseif ($type === 'api') {
+                    $status = $this->apiChecker
+                        ? $this->apiChecker->checkOne($urlOrDsn)
+                        : ['status' => 'unknown', 'details' => 'No API checker'];
                 } else {
-                    $status = $this->pingService($urlOrDsn);
+                    $status = ['status' => 'unknown', 'details' => "Unknown type: $type"];
                 }
 
                 if ($status['status'] === 'down') {
@@ -40,25 +46,10 @@ class HealthCheckProvider implements ProviderInterface
             $healthCheck->addCheck(
                 $serviceName,
                 $overallStatus,
-                $serviceDetails   // ✅ plus de json_encode
+                $serviceDetails   // ✅ tableau structuré
             );
         }
 
         return [$healthCheck];
-    }
-
-    private function pingService(string $url): array
-    {
-        try {
-            $context = stream_context_create(['http' => ['timeout' => 2]]);
-            $result = @file_get_contents($url, false, $context);
-            if ($result === false) {
-                return ['status' => 'down', 'details' => $url];
-            }
-
-            return ['status' => 'healthy', 'details' => $url];
-        } catch (\Throwable $e) {
-            return ['status' => 'down', 'details' => $url . ' ' . $e->getMessage()];
-        }
     }
 }
