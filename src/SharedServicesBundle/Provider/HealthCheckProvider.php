@@ -1,56 +1,62 @@
 <?php
-
+// src/DataProvider/HealthCheckProvider.php
 namespace mtonzar\SharedServicesBundle\Provider;
 
-use ApiPlatform\State\ProviderInterface;
-use ApiPlatform\Metadata\Operation;
-use mtonzar\SharedServicesBundle\Entity\HealthCheck;
-use mtonzar\SharedServicesBundle\Service\HealthChecker\DatabaseHealthChecker;
-use mtonzar\SharedServicesBundle\Service\HealthChecker\ApiDependencyHealthChecker;
+use ApiPlatform\State\Provider\CollectionProviderInterface;
+use ApiPlatform\State\Provider\RestrictedDataProviderInterface;
+use App\Entity\HealthCheck;
+use App\Service\HealthChecker\DatabaseHealthChecker;
+use App\Service\HealthChecker\CacheHealthChecker;
+use App\Service\HealthChecker\QueueHealthChecker;
+use App\Service\HealthChecker\ApiDependencyHealthChecker;
 
-class HealthCheckProvider implements ProviderInterface
+
+class HealthCheckProvider implements CollectionProviderInterface, RestrictedDataProviderInterface
 {
-    public function __construct(
-        private ?DatabaseHealthChecker $databaseChecker = null,
-        private ?ApiDependencyHealthChecker $apiChecker = null,
-        private array $services = []  // config.yaml => services list
-    ) {}
+    private DatabaseHealthChecker $databaseChecker;
+    private CacheHealthChecker $cacheChecker;
+    private QueueHealthChecker $queueChecker;
+    private ApiDependencyHealthChecker $apiDependencyChecker;
 
-    public function provide(Operation $operation, array $uriVariables = [], array $context = []): array
+    public function __construct(
+        DatabaseHealthChecker $databaseChecker,
+        CacheHealthChecker $cacheChecker,
+        QueueHealthChecker $queueChecker,
+        ApiDependencyHealthChecker $apiDependencyChecker
+    ) {
+        $this->databaseChecker = $databaseChecker;
+        $this->cacheChecker = $cacheChecker;
+        $this->queueChecker = $queueChecker;
+        $this->apiDependencyChecker = $apiDependencyChecker;
+    }
+
+    public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
+    {
+        return $resourceClass === HealthCheck::class;
+    }
+
+    public function getCollection(string $resourceClass, string $operationName = null, array $context = []): iterable
     {
         $healthCheck = new HealthCheck();
 
-        foreach ($this->services as $serviceName => $endpoints) {
-            $serviceDetails = [];
-            $overallStatus = 'healthy';
+        // Vérification de la base de données
+        $dbStatus = $this->databaseChecker->check();
+        $healthCheck->addCheck('database', $dbStatus['status'], $dbStatus['details']);
 
-            foreach ($endpoints as $type => $urlOrDsn) {
-                if ($type === 'database') {
-                    $status = $this->databaseChecker
-                        ? $this->databaseChecker->check($urlOrDsn)
-                        : ['status' => 'unknown', 'details' => 'No DB checker'];
-                } elseif ($type === 'api') {
-                    $status = $this->apiChecker
-                        ? $this->apiChecker->checkOne($urlOrDsn)
-                        : ['status' => 'unknown', 'details' => 'No API checker'];
-                } else {
-                    $status = ['status' => 'unknown', 'details' => "Unknown type: $type"];
-                }
+        // Vérification du cache
+        $cacheStatus = $this->cacheChecker->check();
+        $healthCheck->addCheck('cache', $cacheStatus['status'], $cacheStatus['details']);
 
-                if ($status['status'] === 'down') {
-                    $overallStatus = 'down';
-                }
+        // Vérification des files de messages
+        $queueStatus = $this->queueChecker->check();
+        $healthCheck->addCheck('queue', $queueStatus['status'], $queueStatus['details']);
 
-                $serviceDetails[$type] = $status;
-            }
+        // Vérification des API externes
+        $apiStatus = $this->apiDependencyChecker->check();
+        $healthCheck->addCheck('external_apis', $apiStatus['status'], $apiStatus['details']);
 
-            $healthCheck->addCheck(
-                $serviceName,
-                $overallStatus,
-                $serviceDetails
-            );
-        }
+        // Vous pouvez ajouter d'autres vérifications ici...
 
-        return [$healthCheck];
+        return [$healthCheck]; // Retourne un tableau avec un seul élément
     }
 }

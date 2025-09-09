@@ -1,26 +1,63 @@
 <?php
 // src/Service/HealthChecker/CacheHealthChecker.php
-namespace mtonzar\SharedServicesBundle\Service\HealthChecker;
+namespace App\Service\HealthChecker;
 
-use Symfony\Contracts\Cache\CacheInterface;
+use Symfony\Component\Cache\Adapter\AdapterInterface;
+use Psr\Cache\CacheException;
 
-class CacheHealthChecker
+class CacheHealthChecker implements HealthCheckerInterface
 {
-    public function __construct(private CacheInterface $cache) {}
+    private AdapterInterface $cache;
+
+    public function __construct(AdapterInterface $cache)
+    {
+        $this->cache = $cache;
+    }
 
     public function check(): array
     {
         try {
-            $this->cache->get('health_check', fn() => 'ok');
-
+            $key = 'health_check_' . random_int(1000, 9999);
+            $start = microtime(true);
+            
+            // Test d'écriture
+            $item = $this->cache->getItem($key);
+            $item->set('test');
+            $this->cache->save($item);
+            
+            // Test de lecture
+            $item = $this->cache->getItem($key);
+            $value = $item->get();
+            
+            // Suppression
+            $this->cache->deleteItem($key);
+            
+            $duration = microtime(true) - $start;
+            $status = ($value === 'test') ? 'healthy' : 'degraded';
+            
             return [
-                'status' => 'healthy',
-                'details' => 'Cache connection OK'
+                'status' => $status,
+                'details' => [
+                    'response_time' => round($duration * 1000, 2) . 'ms',
+                    'available' => true,
+                    'read_write_test' => ($value === 'test')
+                ]
+            ];
+        } catch (CacheException $e) {
+            return [
+                'status' => 'down',
+                'details' => [
+                    'error' => $e->getMessage(),
+                    'available' => false
+                ]
             ];
         } catch (\Throwable $e) {
             return [
                 'status' => 'down',
-                'details' => 'Cache connection failed: ' . $e->getMessage()
+                'details' => [
+                    'error' => $e->getMessage(),
+                    'available' => false
+                ]
             ];
         }
     }

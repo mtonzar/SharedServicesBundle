@@ -1,29 +1,70 @@
 <?php
-namespace mtonzar\SharedServicesBundle\Entity;
+// src/Entity/HealthCheck.php
+namespace App\Entity;
 
-use ApiPlatform\Metadata\ApiResource;
-use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Annotation\ApiProperty;
+use Symfony\Component\Serializer\Annotation\Groups;
 
-#[ApiResource(
-    operations: [new GetCollection()],
-    paginationEnabled: false
-)]
+/**
+ * @ApiResource(
+ *     collectionOperations={
+ *         "get"={
+ *             "path"="/health",
+ *             "normalization_context"={"groups"={"health:read"}},
+ *             "pagination_enabled"=false,
+ *             "openapi_context"={
+ *                 "summary"="Vérifie l'état de santé de l'application",
+ *                 "description"="Retourne l'état de santé des différents composants de l'application"
+ *             }
+ *         }
+ *     },
+ *     itemOperations={},
+ *     shortName="Health"
+ * )
+ */
 class HealthCheck
 {
-    private array $checks = [];
-    private \DateTimeImmutable $checkedAt;
+    /**
+     * @ApiProperty(identifier=true)
+     */
+    private string $id = 'current';
 
-    public function __construct()
+    /**
+     * @Groups({"health:read"})
+     */
+    private string $status;
+
+    /**
+     * @Groups({"health:read"})
+     */
+    private array $checks = [];
+
+    /**
+     * @Groups({"health:read"})
+     */
+    private \DateTimeImmutable $timestamp;
+
+    public function __construct(string $status = 'healthy')
     {
-        $this->checkedAt = new \DateTimeImmutable();
+        $this->status = $status;
+        $this->timestamp = new \DateTimeImmutable();
     }
 
-    public function addCheck(string $service, string $status, array|string $details): void
+    public function getId(): string
     {
-        $this->checks[$service] = [
-            'status' => $status,
-            'details' => $details
-        ];
+        return $this->id;
+    }
+
+    public function getStatus(): string
+    {
+        return $this->status;
+    }
+
+    public function setStatus(string $status): self
+    {
+        $this->status = $status;
+        return $this;
     }
 
     public function getChecks(): array
@@ -31,8 +72,25 @@ class HealthCheck
         return $this->checks;
     }
 
-    public function getTimestamp(): string
+    public function addCheck(string $name, string $status, array $details = []): self
     {
-        return $this->checkedAt->format('c');
+        $this->checks[$name] = [
+            'status' => $status,
+            'details' => $details
+        ];
+
+        // Si un check est dégradé ou down, le statut global est affecté
+        if ($status === 'degraded' && $this->status === 'healthy') {
+            $this->status = 'degraded';
+        } elseif ($status === 'down') {
+            $this->status = 'down';
+        }
+
+        return $this;
+    }
+
+    public function getTimestamp(): \DateTimeImmutable
+    {
+        return $this->timestamp;
     }
 }
