@@ -1,6 +1,6 @@
 <?php
 
-namespace mtonzar\SharedServicesBundle;
+namespace Mtonzar\SharedServicesBundle;
 
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
