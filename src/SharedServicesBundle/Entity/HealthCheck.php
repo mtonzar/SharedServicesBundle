@@ -6,23 +6,6 @@ use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiProperty;
 use Symfony\Component\Serializer\Annotation\Groups;
 
-/**
- * @ApiResource(
- *     collectionOperations={
- *         "get"={
- *             "path"="/health",
- *             "normalization_context"={"groups"={"health:read"}},
- *             "pagination_enabled"=false,
- *             "openapi_context"={
- *                 "summary"="Vérifie l'état de santé de l'application",
- *                 "description"="Retourne l'état de santé des différents composants de l'application"
- *             }
- *         }
- *     },
- *     itemOperations={},
- *     shortName="Health"
- * )
- */
 class HealthCheck
 {
     /**
