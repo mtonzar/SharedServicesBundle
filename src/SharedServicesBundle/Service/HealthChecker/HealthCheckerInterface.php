@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Service\HealthChecker;
+namespace mtonzar\SharedServicesBundle\Service\HealthChecker;
 
 interface HealthCheckerInterface
 {

@@ -1,7 +1,6 @@
 <?php
 
 namespace mtonzar\SharedServicesBundle\Service\HealthChecker;
-
 use Doctrine\DBAL\Connection;
 use Psr\Cache\CacheItemPoolInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;

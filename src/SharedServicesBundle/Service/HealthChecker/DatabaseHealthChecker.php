@@ -1,7 +1,7 @@
 <?php
 // src/Service/HealthChecker/DatabaseHealthChecker.php
 
-namespace App\Service\HealthChecker;
+namespace mtonzar\SharedServicesBundle\Service\HealthChecker;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception as DBALException;

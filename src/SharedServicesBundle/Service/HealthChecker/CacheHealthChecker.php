@@ -1,6 +1,6 @@
 <?php
 // src/Service/HealthChecker/CacheHealthChecker.php
-namespace App\Service\HealthChecker;
+namespace mtonzar\SharedServicesBundle\Service\HealthChecker;
 
 use Symfony\Component\Cache\Adapter\AdapterInterface;
 use Psr\Cache\CacheException;
