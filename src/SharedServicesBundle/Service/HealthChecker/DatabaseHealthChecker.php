@@ -1,5 +1,6 @@
 <?php
 // src/Service/HealthChecker/DatabaseHealthChecker.php
+
 namespace App\Service\HealthChecker;
 
 use Doctrine\DBAL\Connection;
