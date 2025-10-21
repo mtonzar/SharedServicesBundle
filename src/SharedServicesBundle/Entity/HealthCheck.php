@@ -1,6 +1,6 @@
 <?php
 // src/Entity/HealthCheck.php
-namespace App\Entity;
+namespace mtonzar\SharedServicesBundle\Service\HealthChecker;
 
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiProperty;
