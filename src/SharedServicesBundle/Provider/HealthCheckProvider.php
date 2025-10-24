@@ -1,14 +1,14 @@
 <?php
-// src/DataProvider/HealthCheckProvider.php
+// src/Provider/HealthCheckProvider.php
 namespace mtonzar\SharedServicesBundle\Provider;
 
 use ApiPlatform\State\Provider\CollectionProviderInterface;
 use ApiPlatform\State\Provider\RestrictedDataProviderInterface;
-use App\Entity\HealthCheck;
-use App\Service\HealthChecker\DatabaseHealthChecker;
-use App\Service\HealthChecker\CacheHealthChecker;
-use App\Service\HealthChecker\QueueHealthChecker;
-use App\Service\HealthChecker\ApiDependencyHealthChecker;
+use mtonzar\SharedServicesBundle\Entity\HealthCheck;
+use mtonzar\SharedServicesBundle\Service\HealthChecker\DatabaseHealthChecker;
+use mtonzar\SharedServicesBundle\Service\HealthChecker\CacheHealthChecker;
+use mtonzar\SharedServicesBundle\Service\HealthChecker\QueueHealthChecker;
+use mtonzar\SharedServicesBundle\Service\HealthChecker\ApiDependencyHealthChecker;
 
 
 class HealthCheckProvider implements CollectionProviderInterface, RestrictedDataProviderInterface
