@@ -2,40 +2,35 @@
 // src/Provider/HealthCheckProvider.php
 namespace mtonzar\SharedServicesBundle\Provider;
 
-use ApiPlatform\State\Provider\CollectionProviderInterface;
-use ApiPlatform\State\Provider\RestrictedDataProviderInterface;
+use ApiPlatform\Metadata\Operation;
+use ApiPlatform\State\ProviderInterface;
 use mtonzar\SharedServicesBundle\Entity\HealthCheck;
 use mtonzar\SharedServicesBundle\Service\HealthChecker\DatabaseHealthChecker;
 use mtonzar\SharedServicesBundle\Service\HealthChecker\CacheHealthChecker;
 use mtonzar\SharedServicesBundle\Service\HealthChecker\QueueHealthChecker;
 use mtonzar\SharedServicesBundle\Service\HealthChecker\ApiDependencyHealthChecker;
 
-
-class HealthCheckProvider implements CollectionProviderInterface, RestrictedDataProviderInterface
+/**
+ * State Provider for HealthCheck compatible with API Platform 3.x
+ */
+class HealthCheckProvider implements ProviderInterface
 {
-    private DatabaseHealthChecker $databaseChecker;
-    private CacheHealthChecker $cacheChecker;
-    private QueueHealthChecker $queueChecker;
-    private ApiDependencyHealthChecker $apiDependencyChecker;
-
     public function __construct(
-        DatabaseHealthChecker $databaseChecker,
-        CacheHealthChecker $cacheChecker,
-        QueueHealthChecker $queueChecker,
-        ApiDependencyHealthChecker $apiDependencyChecker
-    ) {
-        $this->databaseChecker = $databaseChecker;
-        $this->cacheChecker = $cacheChecker;
-        $this->queueChecker = $queueChecker;
-        $this->apiDependencyChecker = $apiDependencyChecker;
-    }
+        private readonly DatabaseHealthChecker $databaseChecker,
+        private readonly CacheHealthChecker $cacheChecker,
+        private readonly QueueHealthChecker $queueChecker,
+        private readonly ApiDependencyHealthChecker $apiDependencyChecker
+    ) {}
 
-    public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
-    {
-        return $resourceClass === HealthCheck::class;
-    }
-
-    public function getCollection(string $resourceClass, string $operationName = null, array $context = []): iterable
+    /**
+     * Provide health check data for API Platform
+     *
+     * @param Operation $operation The API Platform operation
+     * @param array $uriVariables URI variables (not used for health check)
+     * @param array $context Additional context
+     * @return HealthCheck|array Returns a HealthCheck object or array of HealthCheck objects
+     */
+    public function provide(Operation $operation, array $uriVariables = [], array $context = []): object|array|null
     {
         $healthCheck = new HealthCheck();
 
@@ -55,8 +50,12 @@ class HealthCheckProvider implements CollectionProviderInterface, RestrictedData
         $apiStatus = $this->apiDependencyChecker->check();
         $healthCheck->addCheck('external_apis', $apiStatus['status'], $apiStatus['details']);
 
-        // Vous pouvez ajouter d'autres vérifications ici...
+        // For GetCollection operations, return an array
+        // For Get operations, return a single object
+        if ($operation->getName() === '_api_/health_checks{._format}_get_collection') {
+            return [$healthCheck];
+        }
 
-        return [$healthCheck]; // Retourne un tableau avec un seul élément
+        return $healthCheck;
     }
 }
