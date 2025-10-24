@@ -1,16 +1,20 @@
 <?php
 // src/Entity/HealthCheck.php
-namespace mtonzar\SharedServicesBundle\Service\HealthChecker;
+namespace mtonzar\SharedServicesBundle\Entity;
 
-use ApiPlatform\Core\Annotation\ApiResource;
-use ApiPlatform\Core\Annotation\ApiProperty;
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\GetCollection;
 use Symfony\Component\Serializer\Annotation\Groups;
+use mtonzar\SharedServicesBundle\Provider\HealthCheckProvider;
 
+#[ApiResource(
+    operations: [
+        new GetCollection(provider: HealthCheckProvider::class)
+    ],
+    normalizationContext: ['groups' => ['health:read']]
+)]
 class HealthCheck
 {
-    /**
-     * @ApiProperty(identifier=true)
-     */
     private string $id = 'current';
 
     /**
