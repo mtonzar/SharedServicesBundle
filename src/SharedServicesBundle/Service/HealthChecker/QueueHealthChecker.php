@@ -4,6 +4,7 @@
 namespace mtonzar\SharedServicesBundle\Service\HealthChecker;
 
 use Symfony\Component\Messenger\Transport\TransportInterface;
+use mtonzar\SharedServicesBundle\Utils\Utf8Sanitizer;
 
 class QueueHealthChecker implements HealthCheckerInterface
 {
@@ -14,6 +15,11 @@ class QueueHealthChecker implements HealthCheckerInterface
     {
         $this->transport = $transport;
         $this->queueName = $queueName;
+    }
+
+    public function setTransport(TransportInterface $transport): void
+    {
+        $this->transport = $transport;
     }
 
     public function check(): array
@@ -42,7 +48,7 @@ class QueueHealthChecker implements HealthCheckerInterface
                 ]
             ];
         } catch (\Throwable $e) {
-            return [
+            $result = [
                 'status' => 'down',
                 'details' => [
                     'queue_name' => $this->queueName,
@@ -50,6 +56,7 @@ class QueueHealthChecker implements HealthCheckerInterface
                     'available' => false
                 ]
             ];
+            return Utf8Sanitizer::sanitize($result);
         }
     }
 }

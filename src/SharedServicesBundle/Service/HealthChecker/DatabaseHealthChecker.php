@@ -5,6 +5,7 @@ namespace mtonzar\SharedServicesBundle\Service\HealthChecker;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception as DBALException;
+use mtonzar\SharedServicesBundle\Utils\Utf8Sanitizer;
 
 class DatabaseHealthChecker implements HealthCheckerInterface
 {
@@ -19,12 +20,12 @@ class DatabaseHealthChecker implements HealthCheckerInterface
     {
         try {
             $start = microtime(true);
-            
+
             // Exécute une requête simple pour vérifier la connexion
             $this->connection->executeQuery('SELECT 1');
-            
+
             $duration = microtime(true) - $start;
-            
+
             return [
                 'status' => 'healthy',
                 'details' => [
@@ -33,13 +34,16 @@ class DatabaseHealthChecker implements HealthCheckerInterface
                 ]
             ];
         } catch (DBALException $e) {
-            return [
+            $result = [
                 'status' => 'down',
                 'details' => [
                     'error' => $e->getMessage(),
                     'connected' => false
                 ]
             ];
+
+            // Sanitize UTF-8 encoding for error messages
+            return Utf8Sanitizer::sanitize($result);
         }
     }
 }

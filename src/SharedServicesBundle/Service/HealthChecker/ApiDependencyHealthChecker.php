@@ -5,6 +5,7 @@ namespace mtonzar\SharedServicesBundle\Service\HealthChecker;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 use Symfony\Contracts\HttpClient\Exception\HttpExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
+use mtonzar\SharedServicesBundle\Utils\Utf8Sanitizer;
 
 class ApiDependencyHealthChecker implements HealthCheckerInterface
 {
@@ -67,6 +68,6 @@ class ApiDependencyHealthChecker implements HealthCheckerInterface
             }
         }
 
-        return $results;
+        return Utf8Sanitizer::sanitize($results);
     }
 }

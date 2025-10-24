@@ -4,6 +4,7 @@ namespace mtonzar\SharedServicesBundle\Service\HealthChecker;
 
 use Symfony\Component\Cache\Adapter\AdapterInterface;
 use Psr\Cache\CacheException;
+use mtonzar\SharedServicesBundle\Utils\Utf8Sanitizer;
 
 class CacheHealthChecker implements HealthCheckerInterface
 {
@@ -24,11 +25,11 @@ class CacheHealthChecker implements HealthCheckerInterface
             $item = $this->cache->getItem($key);
             $item->set('test');
             $this->cache->save($item);
-            
+
             // Test de lecture
             $item = $this->cache->getItem($key);
             $value = $item->get();
-            
+
             // Suppression
             $this->cache->deleteItem($key);
             
@@ -44,21 +45,23 @@ class CacheHealthChecker implements HealthCheckerInterface
                 ]
             ];
         } catch (CacheException $e) {
-            return [
+            $result = [
                 'status' => 'down',
                 'details' => [
                     'error' => $e->getMessage(),
                     'available' => false
                 ]
             ];
+            return Utf8Sanitizer::sanitize($result);
         } catch (\Throwable $e) {
-            return [
+            $result = [
                 'status' => 'down',
                 'details' => [
                     'error' => $e->getMessage(),
                     'available' => false
                 ]
             ];
+            return Utf8Sanitizer::sanitize($result);
         }
     }
 }
