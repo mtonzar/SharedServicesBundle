@@ -109,8 +109,9 @@ class QueueHealthChecker implements HealthCheckerInterface
                 'status' => 'down',
                 'details' => [
                     'queue_name' => $this->queueName,
-                    'error' => $e->getMessage(),
-                    'available' => false
+                    'available' => false,
+                    'code' => 'QUEUE-UNAVAILABLE',
+                    'message' => 'queue: down',
                 ]
             ];
             return Utf8Sanitizer::sanitize($result);
