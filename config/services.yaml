@@ -11,7 +11,7 @@ services:
 
     mtonzar\SharedServicesBundle\Service\HealthChecker\QueueHealthChecker:
         arguments:
-            $transport: '@messenger.transport.async'
+            $transport: null
             $queueName: 'async'
             $connection: '@doctrine.dbal.default_connection'
 
