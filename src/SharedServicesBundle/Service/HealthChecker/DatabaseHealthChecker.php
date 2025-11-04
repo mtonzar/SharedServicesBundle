@@ -37,8 +37,9 @@ class DatabaseHealthChecker implements HealthCheckerInterface
             $result = [
                 'status' => 'down',
                 'details' => [
-                    'error' => $e->getMessage(),
-                    'connected' => false
+                    'available' => false,
+                    'connected' => false,
+                    'code' => 'DB-UNAVAILABLE',
                 ]
             ];
 
