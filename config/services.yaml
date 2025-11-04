@@ -8,7 +8,13 @@ services:
     # HealthCheckers
     mtonzar\SharedServicesBundle\Service\HealthChecker\DatabaseHealthChecker: ~
     mtonzar\SharedServicesBundle\Service\HealthChecker\CacheHealthChecker: ~
-    mtonzar\SharedServicesBundle\Service\HealthChecker\QueueHealthChecker: ~
+
+    mtonzar\SharedServicesBundle\Service\HealthChecker\QueueHealthChecker:
+        arguments:
+            $transport: '@messenger.transport.async'
+            $queueName: 'async'
+            $connection: '@doctrine.dbal.default_connection'
+
     mtonzar\SharedServicesBundle\Service\HealthChecker\ApiDependencyHealthChecker: ~
     mtonzar\SharedServicesBundle\Service\HealthChecker\LivenessHealthChecker: ~
     mtonzar\SharedServicesBundle\Service\HealthChecker\ReadinessHealthChecker: ~
