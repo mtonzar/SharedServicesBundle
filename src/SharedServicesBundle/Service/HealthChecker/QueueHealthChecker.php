@@ -27,17 +27,45 @@ class QueueHealthChecker implements HealthCheckerInterface
 
     public function check(): array
     {
-        // Si on a une connexion DB, vérifier d'abord qu'elle est accessible
+        // Vérifier directement via DBAL sans utiliser le Transport (évite le destructeur PostgreSqlConnection)
         if ($this->connection !== null) {
             try {
+                $start = microtime(true);
+
+                // Vérifier que la connexion fonctionne
                 $this->connection->executeQuery('SELECT 1');
+
+                // Compter les messages en attente dans la table messenger_messages
+                $result = $this->connection->executeQuery(
+                    'SELECT COUNT(*) as count FROM messenger_messages WHERE queue_name = ?',
+                    [$this->queueName]
+                );
+                $row = $result->fetchAssociative();
+                $pendingMessages = (int) ($row['count'] ?? 0);
+
+                $duration = microtime(true) - $start;
+
+                // Déterminer le statut en fonction du nombre de messages en attente
+                $status = 'healthy';
+                if ($pendingMessages > 1000) {
+                    $status = 'degraded';
+                }
+
+                return [
+                    'status' => $status,
+                    'details' => [
+                        'queue_name' => $this->queueName,
+                        'pending_messages' => $pendingMessages,
+                        'response_time' => round($duration * 1000, 2) . 'ms',
+                        'available' => true
+                    ]
+                ];
             } catch (\Throwable $e) {
-                // La DB est down, ne pas essayer d'utiliser le transport (évite l'erreur fatale du destructeur)
                 $result = [
                     'status' => 'down',
                     'details' => [
                         'queue_name' => $this->queueName,
-                        'error' => 'Database connection required for queue is not available',
+                        'error' => $e->getMessage(),
                         'available' => false
                     ]
                 ];
@@ -45,26 +73,23 @@ class QueueHealthChecker implements HealthCheckerInterface
             }
         }
 
+        // Fallback : utiliser le transport si pas de connexion DBAL fournie
         try {
             if ($this->transport === null) {
                 return [
                     'status' => 'down',
                     'details' => [
                         'queue_name' => $this->queueName,
-                        'error' => 'Transport not configured',
+                        'error' => 'Neither connection nor transport configured',
                         'available' => false
                     ]
                 ];
             }
 
             $start = microtime(true);
-
-            // Récupérer le nombre de messages en attente
             $pendingMessages = count($this->transport->get());
-
             $duration = microtime(true) - $start;
 
-            // Déterminer le statut en fonction du nombre de messages en attente
             $status = 'healthy';
             if ($pendingMessages > 1000) {
                 $status = 'degraded';
