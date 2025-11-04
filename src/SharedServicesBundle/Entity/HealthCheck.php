@@ -15,21 +15,16 @@ use mtonzar\SharedServicesBundle\Provider\HealthCheckProvider;
 )]
 class HealthCheck
 {
+    #[Groups(['health:read'])]
     private string $id = 'current';
 
-    /**
-     * @Groups({"health:read"})
-     */
+    #[Groups(['health:read'])]
     private string $status;
 
-    /**
-     * @Groups({"health:read"})
-     */
+    #[Groups(['health:read'])]
     private array $checks = [];
 
-    /**
-     * @Groups({"health:read"})
-     */
+    #[Groups(['health:read'])]
     private \DateTimeImmutable $timestamp;
 
     public function __construct(string $status = 'healthy')
