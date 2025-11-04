@@ -32,10 +32,7 @@ class QueueHealthChecker implements HealthCheckerInterface
             try {
                 $start = microtime(true);
 
-                // Vérifier que la connexion fonctionne
-                $this->connection->executeQuery('SELECT 1');
-
-                // Compter les messages en attente dans la table messenger_messages
+                // Compter directement les messages (pas de SELECT 1 pour éviter les timeouts longs)
                 $result = $this->connection->executeQuery(
                     'SELECT COUNT(*) as count FROM messenger_messages WHERE queue_name = ?',
                     [$this->queueName]
