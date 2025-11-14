@@ -1,8 +1,6 @@
 <?php
 // src/SharedServicesBundle/Message/Event/OrderCreated.php
-namespace SharedServicesBundle\Message\Event;
-
-use DateTime;
+namespace mtonzar\SharedServicesBundle\Message\Event;
 
 class OrderCreated implements EventInterface
 {

@@ -1,6 +1,6 @@
 <?php
 // src/SharedServicesBundle/Message/Event/EventInterface.php
-namespace SharedServicesBundle\Message\Event;
+namespace mtonzar\SharedServicesBundle\Message\Event;
 
 interface EventInterface
 {
